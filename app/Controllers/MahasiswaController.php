@@ -10,7 +10,7 @@ class MahasiswaController
 
         $mahasiswaList = $model->getAll();
 
-        require_once __DIR__ . '/../views/Mahasiswa/index.php';
+        require_once __DIR__ . '/../Views/Mahasiswa/index.php';
     }
 
     public function detail()
@@ -21,6 +21,6 @@ class MahasiswaController
 
         $mahasiswa = $model->getByNim($nim);
 
-        require_once __DIR__ . '/../views/Mahasiswa/detail.php';
+        require_once __DIR__ . '/../Views/Mahasiswa/detail.php';
     }
 }
