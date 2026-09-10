@@ -53,7 +53,7 @@
             <strong>Prodi:</strong> <?= $mahasiswa['prodi'] ?>
         </div>
 
-        <a class="nav-link" href="?url=Mahasiswa">Kembali</a>
+        <a class="nav-link" href="/si-akademik/public/mahasiswa">Kembali</a>
     </div>
 </body>
 </html>

@@ -69,7 +69,7 @@
                         <td><?= $dosen['nama'] ?></td>
                         <td><?= $dosen['prodi'] ?></td>
                         <td>
-                            <a href="?url=Dosen/detail&nidn=<?= $dosen['nidn'] ?>">Detail</a>
+                            <a href="/si-akademik/public/dosen/detail?nidn=<?= $dosen['nidn'] ?>">Detail</a>
                         </td>
                     </tr>
 
@@ -77,7 +77,9 @@
 
             </table>
 
-            <a class="nav-link" href="?url=Mahasiswa">Lihat Daftar Mahasiswa</a>
+            <a class="nav-link" href="/si-akademik/public/dashboard">Dashboard</a>
+            <a class="nav-link" href="/si-akademik/public/mahasiswa">Lihat Daftar Mahasiswa</a>
+            <a class="nav-link" href="/si-akademik/public/logout">Logout</a>
         </div>
     </body>
 </html>

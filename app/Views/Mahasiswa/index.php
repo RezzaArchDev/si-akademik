@@ -69,7 +69,7 @@
                         <td><?= $mahasiswa['nama'] ?></td>
                         <td><?= $mahasiswa['prodi'] ?></td>
                         <td>
-                            <a href="?url=Mahasiswa/detail&nim=<?= $mahasiswa['nim'] ?>">Detail</a>
+                            <a href="/si-akademik/public/mahasiswa/detail?nim=<?= $mahasiswa['nim'] ?>">Detail</a>
                         </td>
                     </tr>
 
@@ -77,7 +77,9 @@
 
             </table>
 
-            <a class="nav-link" href="?url=Dosen">Lihat Daftar Dosen</a>
+            <a class="nav-link" href="/si-akademik/public/dashboard">Dashboard</a>
+            <a class="nav-link" href="/si-akademik/public/dosen">Lihat Daftar Dosen</a>
+            <a class="nav-link" href="/si-akademik/public/logout">Logout</a>
         </div>
     </body>
 </html>

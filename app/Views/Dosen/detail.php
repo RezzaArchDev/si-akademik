@@ -53,7 +53,7 @@
             <strong>Prodi:</strong> <?= $dosen['prodi'] ?>
         </div>
 
-        <a class="nav-link" href="?url=Dosen">Kembali</a>
+        <a class="nav-link" href="/si-akademik/public/dosen">Kembali</a>
     </div>
 </body>
 </html>
