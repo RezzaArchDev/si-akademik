@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../app/Middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../app/Controllers/AuthController.php';
 require_once __DIR__ . '/../app/Controllers/MahasiswaController.php';
@@ -49,6 +50,31 @@ if ($url === '' || $url === 'login') {
 
     $authMiddleware->handle();
     $dosenController->detail();
+
+} elseif ($url === 'dosen/create') {
+
+    $authMiddleware->handle();
+    $dosenController->create();
+
+} elseif ($url === 'dosen/store' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $authMiddleware->handle();
+    $dosenController->store();
+
+} elseif ($url === 'dosen/edit' && isset($_GET['id'])) {
+
+    $authMiddleware->handle();
+    $dosenController->edit($_GET['id']);
+
+} elseif ($url === 'dosen/update' && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['id'])) {
+
+    $authMiddleware->handle();
+    $dosenController->update($_GET['id']);
+
+} elseif ($url === 'dosen/delete' && isset($_GET['id'])) {
+
+    $authMiddleware->handle();
+    $dosenController->delete($_GET['id']);
 
 } else {
 

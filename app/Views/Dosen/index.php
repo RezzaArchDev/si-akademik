@@ -54,22 +54,28 @@
             <h1>Politeknik Negeri Jember</h1>
 
             <h2>Daftar Dosen</h2>
+            <a class="nav-link" href="/si-akademik/public/dosen/create">Tambah Dosen</a>
             <table>
                 <tr>
                     <th>NIDN</th>
                     <th>Nama</th>
-                    <th>Prodi</th>
+                    <th>Bidang Keahlian</th>
                     <th>Aksi</th>
                 </tr>
 
                 <?php foreach ($dosenList ?? [] as $dosen) : ?>
 
                     <tr>
-                        <td><?= $dosen['nidn'] ?></td>
-                        <td><?= $dosen['nama'] ?></td>
-                        <td><?= $dosen['prodi'] ?></td>
+                        <td><?= htmlspecialchars($dosen['nidn']) ?></td>
+                        <td><?= htmlspecialchars($dosen['nama']) ?></td>
+                        <td><?= htmlspecialchars($dosen['bidang_keahlian']) ?></td>
                         <td>
-                            <a href="/si-akademik/public/dosen/detail?nidn=<?= $dosen['nidn'] ?>">Detail</a>
+                            <a href="/si-akademik/public/dosen/detail?nidn=<?= urlencode($dosen['nidn']) ?>">Detail</a>
+                            |
+                            <a href="/si-akademik/public/dosen/edit?id=<?= $dosen['id'] ?>">Edit</a>
+                            |
+                            <a href="/si-akademik/public/dosen/delete?id=<?= $dosen['id'] ?>"
+                               onclick="return confirm('Hapus data ini?')">Hapus</a>
                         </td>
                     </tr>
 

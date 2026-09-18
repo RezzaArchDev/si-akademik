@@ -44,13 +44,16 @@
         <h1>Detail Mahasiswa</h1>
 
         <div class="detail-item">
-            <strong>NIM:</strong> <?= $mahasiswa['nim'] ?>
+            <strong>NIM:</strong> <?= htmlspecialchars($mahasiswa['nim']) ?>
         </div>
         <div class="detail-item">
-            <strong>Nama:</strong> <?= $mahasiswa['nama'] ?>
+            <strong>Nama:</strong> <?= htmlspecialchars($mahasiswa['nama']) ?>
         </div>
         <div class="detail-item">
-            <strong>Prodi:</strong> <?= $mahasiswa['prodi'] ?>
+            <strong>Prodi:</strong> <?= htmlspecialchars($mahasiswa['prodi']) ?>
+        </div>
+        <div class="detail-item">
+            <strong>Dosen Pembimbing:</strong> <?= htmlspecialchars($mahasiswa['nama_dosen'] ?? '-') ?>
         </div>
 
         <a class="nav-link" href="/si-akademik/public/mahasiswa">Kembali</a>

@@ -2,52 +2,33 @@
 
 class Mahasiswa
 {
+    private $pdo;
+
+    public function __construct($pdo)
+    {
+        $this->pdo = $pdo;
+    }
+
     public function getAll()
     {
-        return [
-            [
-                'nim' => '23001',
-                'nama' => 'Andi',
-                'prodi' => 'Teknik Informatika'
-            ],
-            [
-                'nim' => '23002',
-                'nama' => 'Budi',
-                'prodi' => 'Teknik Informatika'
-            ],
-            [
-                'nim' => '23003',
-                'nama' => 'Citra',
-                'prodi' => 'Sistem Informasi'
-            ],
-            [
-                'nim' => '23004',
-                'nama' => 'Sumarno',
-                'prodi' => 'Sistem Informasi'
-            ],
-            [
-                'nim' => '23005',
-                'nama' => 'Suseno',
-                'prodi' => 'Teknik Informatika'
-            ],
-            [
-                'nim' => '23006',
-                'nama' => 'Tamsir',
-                'prodi' => 'Sistem Informasi'
-            ]
-        ];
+        $sql = "SELECT mahasiswa.*, dosen.nama AS nama_dosen
+                FROM mahasiswa
+                LEFT JOIN dosen
+                ON mahasiswa.dosen_id = dosen.id
+                ORDER BY mahasiswa.nama ASC";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getByNim($nim)
     {
-        $mahasiswaList = $this->getAll();
-
-        foreach ($mahasiswaList as $mahasiswa) {
-            if ($mahasiswa['nim'] === $nim) {
-                return $mahasiswa;
-            }
-        }
-
-        return null;
+        $sql = "SELECT mahasiswa.*, dosen.nama AS nama_dosen
+                FROM mahasiswa
+                LEFT JOIN dosen
+                ON mahasiswa.dosen_id = dosen.id
+                WHERE mahasiswa.nim = :nim";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['nim' => $nim]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

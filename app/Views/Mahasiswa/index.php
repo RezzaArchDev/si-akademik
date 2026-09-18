@@ -59,17 +59,19 @@
                     <th>NIM</th>
                     <th>Nama</th>
                     <th>Prodi</th>
+                    <th>Dosen Pembimbing</th>
                     <th>Aksi</th>
                 </tr>
 
                 <?php foreach ($mahasiswaList ?? [] as $mahasiswa) : ?>
 
                     <tr>
-                        <td><?= $mahasiswa['nim'] ?></td>
-                        <td><?= $mahasiswa['nama'] ?></td>
-                        <td><?= $mahasiswa['prodi'] ?></td>
+                        <td><?= htmlspecialchars($mahasiswa['nim']) ?></td>
+                        <td><?= htmlspecialchars($mahasiswa['nama']) ?></td>
+                        <td><?= htmlspecialchars($mahasiswa['prodi']) ?></td>
+                        <td><?= htmlspecialchars($mahasiswa['nama_dosen'] ?? '-') ?></td>
                         <td>
-                            <a href="/si-akademik/public/mahasiswa/detail?nim=<?= $mahasiswa['nim'] ?>">Detail</a>
+                            <a href="/si-akademik/public/mahasiswa/detail?nim=<?= urlencode($mahasiswa['nim']) ?>">Detail</a>
                         </td>
                     </tr>
 
