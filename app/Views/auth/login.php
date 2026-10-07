@@ -15,7 +15,11 @@
                 <label class="form-label">Password</label>
                 <input type="password" name="password" class="form-control" required>
             </div>
+
             <button type="submit" class="btn btn-primary w-100">Loginn</button>
+
+            <button type="submit" class="btn btn-primary w-100">Loginnn</button>
+
         </form>
     </div>
 </div>
