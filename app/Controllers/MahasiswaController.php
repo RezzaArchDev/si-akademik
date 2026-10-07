@@ -3,35 +3,30 @@
 namespace App\Controllers;
 
 use App\Core\BaseController;
-use App\Models\Mahasiswa;
-use App\Models\ProdiModel;
-use App\Repositories\MahasiswaRepository;
-use InvalidArgumentException;
+use App\Services\MahasiswaService;
 use PDOException;
 
 class MahasiswaController extends BaseController
 {
-    private MahasiswaRepository $repo;
+    private const URL = '/bkpm/acara13/si-akademik/public/mahasiswa';
 
-    // Constructor injection (dari Acara 9)
-    public function __construct(MahasiswaRepository $repo)
+    // Controller hanya bergantung pada Service (tidak ada query / validasi di sini)
+    public function __construct(private MahasiswaService $service)
     {
-        $this->repo = $repo;
     }
 
     public function index(): void
     {
-        $keyword = trim($_GET['q'] ?? '');
-        $daftarMahasiswa = $keyword !== '' ? $this->repo->search($keyword) : $this->repo->all();
+        $keyword         = trim($_GET['q'] ?? '');
+        $daftarMahasiswa = $this->service->all($keyword);
 
-        // view() diwarisi dari BaseController
         $this->view('mahasiswa/index', compact('daftarMahasiswa', 'keyword'));
     }
 
     public function create(): void
     {
-        $mhs = null;   // null = form tambah
-        $prodiList = (new ProdiModel())->all();
+        $mhs       = null;   // null = form tambah
+        $prodiList = $this->service->prodiOptions();
 
         $this->view('mahasiswa/form', compact('mhs', 'prodiList'));
     }
@@ -39,23 +34,24 @@ class MahasiswaController extends BaseController
     public function store(): void
     {
         try {
-            $mhs = $this->buatMahasiswa();   // setter memvalidasi
-            $this->repo->create($mhs);
-        } catch (InvalidArgumentException $e) {
-            $_SESSION['flash'] = ['type' => 'danger', 'message' => $e->getMessage()];
-            $this->redirect('/bkpm/acara10/si-akademik/public/mahasiswa/create');
+            $hasil = $this->service->create($_POST);
         } catch (PDOException $e) {
-            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Gagal menyimpan: NIM sudah terdaftar'];
-            $this->redirect('/bkpm/acara10/si-akademik/public/mahasiswa/create');
+            $this->tangani($e, 'Data gagal disimpan', self::URL . '/create');
+            return;
         }
 
-        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Mahasiswa berhasil ditambahkan'];
-        $this->redirect('/bkpm/acara10/si-akademik/public/mahasiswa');
+        if (!$hasil['success']) {
+            $this->flash('danger', implode('; ', $hasil['errors']));
+            $this->redirect(self::URL . '/create');
+        }
+
+        $this->flash('success', 'Data mahasiswa berhasil ditambahkan');
+        $this->redirect(self::URL);
     }
 
     public function show(int $id): void
     {
-        $mhs = $this->repo->find($id);
+        $mhs = $this->service->find($id);
 
         if ($mhs === null) {
             http_response_code(404);
@@ -67,12 +63,12 @@ class MahasiswaController extends BaseController
         echo "<p>" . htmlspecialchars("{$mhs['nim']} - {$mhs['nama']} ({$mhs['prodi']})") . "</p>";
         echo "<p>Email: " . htmlspecialchars($mhs['email']) . "</p>";
         echo "<p>Angkatan: " . htmlspecialchars($mhs['angkatan']) . "</p>";
-        echo "<a href='/bkpm/acara10/si-akademik/public/mahasiswa'>Kembali</a>";
+        echo "<a href='" . self::URL . "'>Kembali</a>";
     }
 
     public function edit(int $id): void
     {
-        $mhs = $this->repo->find($id);   // berisi data lama = form edit
+        $mhs = $this->service->find($id);
 
         if ($mhs === null) {
             http_response_code(404);
@@ -80,7 +76,7 @@ class MahasiswaController extends BaseController
             return;
         }
 
-        $prodiList = (new ProdiModel())->all();
+        $prodiList = $this->service->prodiOptions();
 
         $this->view('mahasiswa/form', compact('mhs', 'prodiList'));
     }
@@ -88,45 +84,46 @@ class MahasiswaController extends BaseController
     public function update(int $id): void
     {
         try {
-            $mhs = $this->buatMahasiswa($id);   // setter memvalidasi
-            $this->repo->update($mhs);
-        } catch (InvalidArgumentException $e) {
-            $_SESSION['flash'] = ['type' => 'danger', 'message' => $e->getMessage()];
-            $this->redirect("/bkpm/acara10/si-akademik/public/mahasiswa/{$id}/edit");
+            $hasil = $this->service->update($id, $_POST);
         } catch (PDOException $e) {
-            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Gagal mengubah: NIM sudah dipakai'];
-            $this->redirect("/bkpm/acara10/si-akademik/public/mahasiswa/{$id}/edit");
+            $this->tangani($e, 'Data gagal disimpan', self::URL . "/{$id}/edit");
+            return;
         }
 
-        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Data mahasiswa berhasil diubah'];
-        $this->redirect('/bkpm/acara10/si-akademik/public/mahasiswa');
+        if (!$hasil['success']) {
+            $this->flash('danger', implode('; ', $hasil['errors']));
+            $this->redirect(self::URL . "/{$id}/edit");
+        }
+
+        $this->flash('success', 'Data mahasiswa berhasil diubah');
+        $this->redirect(self::URL);
     }
 
     public function destroy(int $id): void
     {
-        $this->repo->delete($id);
-
-        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Data mahasiswa berhasil dihapus'];
-        $this->redirect('/bkpm/acara10/si-akademik/public/mahasiswa');
-    }
-
-    // Membuat objek Mahasiswa dari input form.
-    // Setiap setter bisa melempar InvalidArgumentException jika data tidak valid.
-    private function buatMahasiswa(?int $id = null): Mahasiswa
-    {
-        $mhs = new Mahasiswa();
-
-        if ($id !== null) {
-            $mhs->setId($id);
+        try {
+            $this->service->delete($id);
+        } catch (PDOException $e) {
+            $this->tangani($e, 'Data gagal dihapus', self::URL);
+            return;
         }
 
-        $mhs->setNim($_POST['nim'] ?? '');
-        $mhs->setNama($_POST['nama'] ?? '');
-        $mhs->setEmail($_POST['email'] ?? '');
-        $mhs->setProdiId((int) ($_POST['prodi_id'] ?? 0));
-        $mhs->setAngkatan((int) ($_POST['angkatan'] ?? date('Y')));
-        $mhs->setStatus($_POST['status'] ?? 'aktif');
+        $this->flash('success', 'Data mahasiswa berhasil dihapus');
+        $this->redirect(self::URL);
+    }
 
-        return $mhs;
+    // ===== Helper =====
+
+    // Flash message: disimpan di session, ditampilkan sekali oleh partials/flash.php
+    private function flash(string $type, string $message): void
+    {
+        $_SESSION['flash'] = ['type' => $type, 'message' => $message];
+    }
+
+    // Penanganan error database (di Acara 14 ditambah logging)
+    private function tangani(PDOException $e, string $pesan, string $kembali): void
+    {
+        $this->flash('danger', $pesan);
+        $this->redirect($kembali);
     }
 }

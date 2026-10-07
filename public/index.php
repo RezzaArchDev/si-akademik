@@ -1,29 +1,26 @@
 <?php
 session_start();   // harus dipanggil sebelum ada output
 
-require_once __DIR__ . '/../app/Core/Database.php';
-require_once __DIR__ . '/../app/Core/Model.php';
-require_once __DIR__ . '/../app/Core/BaseController.php';
-require_once __DIR__ . '/../app/Core/Middleware/AuthMiddleware.php';
-require_once __DIR__ . '/../app/Models/Mahasiswa.php';
-require_once __DIR__ . '/../app/Models/ProdiModel.php';
-require_once __DIR__ . '/../app/Models/MatakuliahModel.php';
-require_once __DIR__ . '/../app/Repositories/MahasiswaRepository.php';
-require_once __DIR__ . '/../app/Controllers/HomeController.php';
-require_once __DIR__ . '/../app/Controllers/AuthController.php';
-require_once __DIR__ . '/../app/Controllers/DashboardController.php';
-require_once __DIR__ . '/../app/Controllers/MahasiswaController.php';
-require_once __DIR__ . '/../app/Controllers/ProdiController.php';
-require_once __DIR__ . '/../app/Controllers/MatakuliahController.php';
+// Autoloader sederhana: App\Folder\NamaClass -> app/Folder/NamaClass.php
+spl_autoload_register(function (string $class): void {
+    if (str_starts_with($class, 'App\\')) {
+        $file = __DIR__ . '/../app/' . str_replace('\\', '/', substr($class, 4)) . '.php';
+        if (is_file($file)) {
+            require_once $file;
+        }
+    }
+});
+
 require_once __DIR__ . '/../routes/web.php';
 
-use App\Controllers\MahasiswaController;
 use App\Core\Database;
 use App\Repositories\MahasiswaRepository;
+use App\Repositories\ProdiRepository;
+use App\Services\MahasiswaService;
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-$base = '/bkpm/acara10/si-akademik/public';
+$base = '/bkpm/acara13/si-akademik/public';
 if (str_starts_with($uri, $base)) {
     $uri = substr($uri, strlen($base)) ?: '/';
 }
@@ -65,9 +62,10 @@ foreach ($route['middleware'] ?? [] as $mw) {
 
 // 5. Siapkan controller
 if ($route[0] === 'MahasiswaController') {
-    // Dependency injection: koneksi -> Repository -> Controller
-    $repo       = new MahasiswaRepository(Database::getInstance());
-    $controller = new MahasiswaController($repo);
+    // Dependency injection: koneksi -> Repository -> Service -> Controller
+    $db         = Database::getInstance();
+    $service    = new MahasiswaService(new MahasiswaRepository($db), new ProdiRepository($db));
+    $controller = new \App\Controllers\MahasiswaController($service);
 } else {
     $controllerClass = "App\\Controllers\\{$route[0]}";
     $controller = new $controllerClass();

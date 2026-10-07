@@ -100,4 +100,21 @@ class MahasiswaRepository
         $stmt = $this->db->prepare("DELETE FROM mahasiswa WHERE id = :id");
         $stmt->execute(['id' => $id]);
     }
+
+        // Cek apakah NIM sudah dipakai (opsional: abaikan id tertentu saat edit)
+    public function existsByNim(string $nim, ?int $ignoreId = null): bool
+    {
+        $sql    = "SELECT COUNT(*) FROM mahasiswa WHERE nim = :nim";
+        $params = ['nim' => $nim];
+
+        if ($ignoreId !== null) {
+            $sql .= " AND id <> :id";
+            $params['id'] = $ignoreId;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        return (int) $stmt->fetchColumn() > 0;
+    }
 }

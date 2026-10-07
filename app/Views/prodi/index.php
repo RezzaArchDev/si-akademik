@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="m-0">Daftar Program Studi</h5>
-    <a href="/bkpm/acara10/si-akademik/public/prodi/create" class="btn btn-primary btn-sm">+ Tambah Prodi</a>
+    <a href="/bkpm/acara13/si-akademik/public/prodi/create" class="btn btn-primary btn-sm">+ Tambah Prodi</a>
 </div>
 
 <table class="table table-bordered table-striped align-middle">
@@ -23,8 +23,8 @@
                 <td><?= htmlspecialchars($p['kode']) ?></td>
                 <td><?= htmlspecialchars($p['nama']) ?></td>
                 <td>
-                    <a href="/bkpm/acara10/si-akademik/public/prodi/<?= $p['id'] ?>/edit" class="btn btn-sm btn-warning">Edit</a>
-                    <form action="/bkpm/acara10/si-akademik/public/prodi/<?= $p['id'] ?>/delete" method="POST" class="d-inline"
+                    <a href="/bkpm/acara13/si-akademik/public/prodi/<?= $p['id'] ?>/edit" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="/bkpm/acara13/si-akademik/public/prodi/<?= $p['id'] ?>/delete" method="POST" class="d-inline"
                             onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                         <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
                     </form>

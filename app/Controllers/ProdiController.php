@@ -28,18 +28,18 @@ class ProdiController extends BaseController
 
         if ($data['kode'] === '' || $data['nama'] === '') {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Kode dan nama prodi wajib diisi'];
-            $this->redirect('/bkpm/acara10/si-akademik/public/prodi/create');
+            $this->redirect('/bkpm/acara13/si-akademik/public/prodi/create');
         }
 
         try {
             (new ProdiModel())->create($data);
         } catch (PDOException $e) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Gagal menyimpan: kode prodi sudah dipakai'];
-            $this->redirect('/bkpm/acara10/si-akademik/public/prodi/create');
+            $this->redirect('/bkpm/acara13/si-akademik/public/prodi/create');
         }
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Prodi berhasil ditambahkan'];
-        $this->redirect('/bkpm/acara10/si-akademik/public/prodi');
+        $this->redirect('/bkpm/acara13/si-akademik/public/prodi');
     }
 
     public function edit(int $id): void
@@ -61,18 +61,18 @@ class ProdiController extends BaseController
 
         if ($data['kode'] === '' || $data['nama'] === '') {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Kode dan nama prodi wajib diisi'];
-            $this->redirect("/bkpm/acara10/si-akademik/public/prodi/{$id}/edit");
+            $this->redirect("/bkpm/acara13/si-akademik/public/prodi/{$id}/edit");
         }
 
         try {
             (new ProdiModel())->update($id, $data);
         } catch (PDOException $e) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Gagal mengubah: kode prodi sudah dipakai'];
-            $this->redirect("/bkpm/acara10/si-akademik/public/prodi/{$id}/edit");
+            $this->redirect("/bkpm/acara13/si-akademik/public/prodi/{$id}/edit");
         }
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Prodi berhasil diubah'];
-        $this->redirect('/bkpm/acara10/si-akademik/public/prodi');
+        $this->redirect('/bkpm/acara13/si-akademik/public/prodi');
     }
 
     public function destroy(int $id): void
@@ -85,7 +85,7 @@ class ProdiController extends BaseController
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Prodi tidak dapat dihapus karena masih dipakai'];
         }
 
-        $this->redirect('/bkpm/acara10/si-akademik/public/prodi');
+        $this->redirect('/bkpm/acara13/si-akademik/public/prodi');
     }
 
     private function input(): array
