@@ -8,7 +8,7 @@
 
         <form action="/bkpm/acara10/si-akademik/public/login" method="POST">
             <div class="mb-3">
-                <label class="form-label">Username</label>
+                <label class="form-label">UserName</label>
                 <input type="text" name="username" class="form-control" required>
             </div>
             <div class="mb-3">
