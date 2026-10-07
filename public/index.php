@@ -14,13 +14,14 @@ spl_autoload_register(function (string $class): void {
 require_once __DIR__ . '/../routes/web.php';
 
 use App\Core\Database;
+use App\Core\Logger;
 use App\Repositories\MahasiswaRepository;
 use App\Repositories\ProdiRepository;
 use App\Services\MahasiswaService;
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-$base = '/bkpm/acara13/si-akademik/public';
+$base = '/bkpm/acara14/si-akademik/public';
 if (str_starts_with($uri, $base)) {
     $uri = substr($uri, strlen($base)) ?: '/';
 }
@@ -54,22 +55,29 @@ if ($route === null) {
     exit;
 }
 
-// 4. Jalankan middleware (jika ada)
-foreach ($route['middleware'] ?? [] as $mw) {
-    $mwInstance = new $mw();
-    $mwInstance->handle();
-}
+try {
+    // 4. Jalankan middleware (jika ada)
+    foreach ($route['middleware'] ?? [] as $mw) {
+        $mwInstance = new $mw();
+        $mwInstance->handle();
+    }
 
-// 5. Siapkan controller
-if ($route[0] === 'MahasiswaController') {
-    // Dependency injection: koneksi -> Repository -> Service -> Controller
-    $db         = Database::getInstance();
-    $service    = new MahasiswaService(new MahasiswaRepository($db), new ProdiRepository($db));
-    $controller = new \App\Controllers\MahasiswaController($service);
-} else {
-    $controllerClass = "App\\Controllers\\{$route[0]}";
-    $controller = new $controllerClass();
-}
+    // 5. Siapkan controller
+    if ($route[0] === 'MahasiswaController') {
+        // Dependency injection: koneksi -> Repository -> Service -> Controller
+        $db         = Database::getInstance();
+        $service    = new MahasiswaService(new MahasiswaRepository($db), new ProdiRepository($db));
+        $controller = new \App\Controllers\MahasiswaController($service);
+    } else {
+        $controllerClass = "App\\Controllers\\{$route[0]}";
+        $controller = new $controllerClass();
+    }
 
-// 6. Panggil method controller
-$controller->{$route[1]}(...$params);
+    // 6. Panggil method controller
+    $controller->{$route[1]}(...$params);
+} catch (Throwable $e) {
+    // Detail error hanya masuk ke log, pengguna melihat halaman 500 yang aman
+    Logger::error($e->getMessage(), ['url' => $uri, 'method' => $method]);
+    http_response_code(500);
+    require __DIR__ . '/../app/Views/errors/500.php';
+}

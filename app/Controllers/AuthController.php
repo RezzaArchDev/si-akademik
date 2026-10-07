@@ -8,7 +8,7 @@ class AuthController
     {
         // Kalau sudah login, tidak perlu lihat form login lagi
         if (!empty($_SESSION['logged_in'])) {
-            header('Location: /bkpm/acara13/si-akademik/public/dashboard');
+            header('Location: /bkpm/acara14/si-akademik/public/dashboard');
             exit;
         }
 
@@ -38,12 +38,12 @@ class AuthController
             ];
             // ===== AKHIR TUGAS MANDIRI =====
 
-            header('Location: /bkpm/acara13/si-akademik/public/dashboard');
+            header('Location: /bkpm/acara14/si-akademik/public/dashboard');
             exit;
         }
 
         $_SESSION['error'] = 'Username atau password salah';
-        header('Location: /bkpm/acara13/si-akademik/public/login');
+        header('Location: /bkpm/acara14/si-akademik/public/login');
         exit;
     }
 
@@ -62,7 +62,7 @@ class AuthController
         ];
         // ===== AKHIR TUGAS MANDIRI =====
 
-        header('Location: /bkpm/acara13/si-akademik/public/login');
+        header('Location: /bkpm/acara14/si-akademik/public/login');
         exit;
     }
 }

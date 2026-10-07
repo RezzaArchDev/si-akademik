@@ -30,18 +30,18 @@ class MatakuliahController extends BaseController
 
         if ($data['kode'] === '' || $data['nama'] === '' || $data['sks'] < 1 || $data['prodi_id'] < 1) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Semua kolom wajib diisi dengan benar'];
-            $this->redirect('/bkpm/acara13/si-akademik/public/matakuliah/create');
+            $this->redirect('/bkpm/acara14/si-akademik/public/matakuliah/create');
         }
 
         try {
             (new MatakuliahModel())->create($data);
         } catch (PDOException $e) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Gagal menyimpan: kode mata kuliah sudah dipakai'];
-            $this->redirect('/bkpm/acara13/si-akademik/public/matakuliah/create');
+            $this->redirect('/bkpm/acara14/si-akademik/public/matakuliah/create');
         }
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Mata kuliah berhasil ditambahkan'];
-        $this->redirect('/bkpm/acara13/si-akademik/public/matakuliah');
+        $this->redirect('/bkpm/acara14/si-akademik/public/matakuliah');
     }
 
     public function edit(int $id): void
@@ -65,18 +65,18 @@ class MatakuliahController extends BaseController
 
         if ($data['kode'] === '' || $data['nama'] === '' || $data['sks'] < 1 || $data['prodi_id'] < 1) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Semua kolom wajib diisi dengan benar'];
-            $this->redirect("/bkpm/acara13/si-akademik/public/matakuliah/{$id}/edit");
+            $this->redirect("/bkpm/acara14/si-akademik/public/matakuliah/{$id}/edit");
         }
 
         try {
             (new MatakuliahModel())->update($id, $data);
         } catch (PDOException $e) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Gagal mengubah: kode mata kuliah sudah dipakai'];
-            $this->redirect("/bkpm/acara13/si-akademik/public/matakuliah/{$id}/edit");
+            $this->redirect("/bkpm/acara14/si-akademik/public/matakuliah/{$id}/edit");
         }
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Mata kuliah berhasil diubah'];
-        $this->redirect('/bkpm/acara13/si-akademik/public/matakuliah');
+        $this->redirect('/bkpm/acara14/si-akademik/public/matakuliah');
     }
 
     public function destroy(int $id): void
@@ -84,7 +84,7 @@ class MatakuliahController extends BaseController
         (new MatakuliahModel())->delete($id);
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Mata kuliah berhasil dihapus'];
-        $this->redirect('/bkpm/acara13/si-akademik/public/matakuliah');
+        $this->redirect('/bkpm/acara14/si-akademik/public/matakuliah');
     }
 
     private function input(): array

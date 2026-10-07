@@ -1,8 +1,8 @@
 <?php
 $isEdit = $prodi !== null;
 $action = $isEdit
-    ? "/bkpm/acara13/si-akademik/public/prodi/{$prodi['id']}/update"
-    : "/bkpm/acara13/si-akademik/public/prodi";
+    ? "/bkpm/acara14/si-akademik/public/prodi/{$prodi['id']}/update"
+    : "/bkpm/acara14/si-akademik/public/prodi";
 ?>
 <h5 class="mb-3"><?= $isEdit ? 'Edit' : 'Tambah' ?> Program Studi</h5>
 
@@ -16,5 +16,5 @@ $action = $isEdit
         <input type="text" name="nama" class="form-control" value="<?= htmlspecialchars($prodi['nama'] ?? '') ?>" required>
     </div>
     <button type="submit" class="btn btn-primary">Simpan</button>
-    <a href="/bkpm/acara13/si-akademik/public/prodi" class="btn btn-secondary">Batal</a>
+    <a href="/bkpm/acara14/si-akademik/public/prodi" class="btn btn-secondary">Batal</a>
 </form>

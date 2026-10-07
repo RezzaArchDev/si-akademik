@@ -3,22 +3,31 @@
 namespace App\Controllers;
 
 use App\Core\BaseController;
+use App\Core\Logger;
 use App\Services\MahasiswaService;
 use PDOException;
+use Throwable;
 
 class MahasiswaController extends BaseController
 {
-    private const URL = '/bkpm/acara13/si-akademik/public/mahasiswa';
+    private const URL = '/bkpm/acara14/si-akademik/public/mahasiswa';
 
     // Controller hanya bergantung pada Service (tidak ada query / validasi di sini)
     public function __construct(private MahasiswaService $service)
     {
     }
 
-    public function index(): void
+        public function index(): void
     {
-        $keyword         = trim($_GET['q'] ?? '');
-        $daftarMahasiswa = $this->service->all($keyword);
+        $keyword = trim($_GET['q'] ?? '');
+
+        try {
+            $daftarMahasiswa = $this->service->all($keyword);
+        } catch (Throwable $e) {
+            Logger::error($e->getMessage(), ['aksi' => 'menampilkan daftar mahasiswa']);
+            $this->flash('danger', 'Data gagal dimuat');
+            $daftarMahasiswa = [];
+        }
 
         $this->view('mahasiswa/index', compact('daftarMahasiswa', 'keyword'));
     }
@@ -35,9 +44,8 @@ class MahasiswaController extends BaseController
     {
         try {
             $hasil = $this->service->create($_POST);
-        } catch (PDOException $e) {
-            $this->tangani($e, 'Data gagal disimpan', self::URL . '/create');
-            return;
+        } catch (Throwable $e) {
+            $this->tangani($e, 'menambah mahasiswa', 'Data gagal disimpan', self::URL . '/create');
         }
 
         if (!$hasil['success']) {
@@ -85,9 +93,8 @@ class MahasiswaController extends BaseController
     {
         try {
             $hasil = $this->service->update($id, $_POST);
-        } catch (PDOException $e) {
-            $this->tangani($e, 'Data gagal disimpan', self::URL . "/{$id}/edit");
-            return;
+        } catch (Throwable $e) {
+            $this->tangani($e, "mengubah mahasiswa id={$id}", 'Data gagal disimpan', self::URL . "/{$id}/edit");
         }
 
         if (!$hasil['success']) {
@@ -103,9 +110,8 @@ class MahasiswaController extends BaseController
     {
         try {
             $this->service->delete($id);
-        } catch (PDOException $e) {
-            $this->tangani($e, 'Data gagal dihapus', self::URL);
-            return;
+        } catch (Throwable $e) {
+            $this->tangani($e, "menghapus mahasiswa id={$id}", 'Data gagal dihapus', self::URL);
         }
 
         $this->flash('success', 'Data mahasiswa berhasil dihapus');
@@ -121,8 +127,16 @@ class MahasiswaController extends BaseController
     }
 
     // Penanganan error database (di Acara 14 ditambah logging)
-    private function tangani(PDOException $e, string $pesan, string $kembali): void
+        // Penanganan error: catat detail ke log, pengguna hanya melihat pesan aman
+    private function tangani(Throwable $e, string $aksi, string $pesan, string $kembali): void
     {
+        Logger::error($e->getMessage(), ['aksi' => $aksi]);
+
+        // 1062 = Duplicate entry (NIM sama dikirim bersamaan / lolos dari pengecekan)
+        if ($e instanceof PDOException && ($e->errorInfo[1] ?? null) === 1062) {
+            $pesan = 'NIM sudah terdaftar';
+        }
+
         $this->flash('danger', $pesan);
         $this->redirect($kembali);
     }
