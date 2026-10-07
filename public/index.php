@@ -21,12 +21,13 @@ use App\Services\MahasiswaService;
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-$base = '/bkpm/acara14/si-akademik/public';
+$base = '/bkpm/acara15/si-akademik/public';
 if (str_starts_with($uri, $base)) {
     $uri = substr($uri, strlen($base)) ?: '/';
 }
 
 $method = $_SERVER['REQUEST_METHOD'];
+$isApi  = str_starts_with($uri, '/api/');
 
 // 1. Cari route yang cocok persis
 $route  = $routes[$method][$uri] ?? null;
@@ -51,6 +52,13 @@ if ($route === null) {
 // 3. Tidak ketemu -> 404
 if ($route === null) {
     http_response_code(404);
+
+    if ($isApi) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Endpoint tidak ditemukan', 'data' => null]);
+        exit;
+    }
+
     echo "404 - Halaman tidak ditemukan";
     exit;
 }
@@ -63,11 +71,12 @@ try {
     }
 
     // 5. Siapkan controller
-    if ($route[0] === 'MahasiswaController') {
+    if (in_array($route[0], ['MahasiswaController', 'ApiMahasiswaController'], true)) {
         // Dependency injection: koneksi -> Repository -> Service -> Controller
-        $db         = Database::getInstance();
-        $service    = new MahasiswaService(new MahasiswaRepository($db), new ProdiRepository($db));
-        $controller = new \App\Controllers\MahasiswaController($service);
+        $db              = Database::getInstance();
+        $service         = new MahasiswaService(new MahasiswaRepository($db), new ProdiRepository($db));
+        $controllerClass = "App\\Controllers\\{$route[0]}";
+        $controller      = new $controllerClass($service);
     } else {
         $controllerClass = "App\\Controllers\\{$route[0]}";
         $controller = new $controllerClass();
@@ -79,5 +88,11 @@ try {
     // Detail error hanya masuk ke log, pengguna melihat halaman 500 yang aman
     Logger::error($e->getMessage(), ['url' => $uri, 'method' => $method]);
     http_response_code(500);
-    require __DIR__ . '/../app/Views/errors/500.php';
+
+    if ($isApi) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'message' => 'Terjadi kesalahan pada server', 'data' => null]);
+    } else {
+        require __DIR__ . '/../app/Views/errors/500.php';
+    }
 }

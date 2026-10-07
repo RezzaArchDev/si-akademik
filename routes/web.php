@@ -23,6 +23,8 @@ $routes = [
         '/matakuliah'            => ['MatakuliahController', 'index',  'middleware' => $auth],
         '/matakuliah/create'     => ['MatakuliahController', 'create', 'middleware' => $auth],
         '/matakuliah/{id}/edit'  => ['MatakuliahController', 'edit',   'middleware' => $auth],
+
+        '/api/mahasiswa'         => ['ApiMahasiswaController', 'index'],
     ],
     'POST' => [
         '/login'                  => ['AuthController', 'login'],
@@ -38,5 +40,7 @@ $routes = [
         '/matakuliah'             => ['MatakuliahController', 'store',   'middleware' => $auth],
         '/matakuliah/{id}/update' => ['MatakuliahController', 'update',  'middleware' => $auth],
         '/matakuliah/{id}/delete' => ['MatakuliahController', 'destroy', 'middleware' => $auth],
+
+        '/api/mahasiswa'          => ['ApiMahasiswaController', 'store'],
     ],
 ];

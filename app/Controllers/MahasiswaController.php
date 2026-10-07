@@ -10,7 +10,7 @@ use Throwable;
 
 class MahasiswaController extends BaseController
 {
-    private const URL = '/bkpm/acara14/si-akademik/public/mahasiswa';
+    private const URL = '/bkpm/acara15/si-akademik/public/mahasiswa';
 
     // Controller hanya bergantung pada Service (tidak ada query / validasi di sini)
     public function __construct(private MahasiswaService $service)

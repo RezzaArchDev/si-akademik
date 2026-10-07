@@ -1,8 +1,8 @@
 <?php
 $isEdit = $mhs !== null;
 $action = $isEdit
-    ? "/bkpm/acara14/si-akademik/public/mahasiswa/{$mhs['id']}/update"
-    : "/bkpm/acara14/si-akademik/public/mahasiswa";
+    ? "/bkpm/acara15/si-akademik/public/mahasiswa/{$mhs['id']}/update"
+    : "/bkpm/acara15/si-akademik/public/mahasiswa";
 ?>
 <h5 class="mb-3"><?= $isEdit ? 'Edit' : 'Tambah' ?> Mahasiswa</h5>
 
@@ -43,5 +43,5 @@ $action = $isEdit
         </select>
     </div>
     <button type="submit" class="btn btn-primary">Simpan</button>
-    <a href="/bkpm/acara14/si-akademik/public/mahasiswa" class="btn btn-secondary">Batal</a>
+    <a href="/bkpm/acara15/si-akademik/public/mahasiswa" class="btn btn-secondary">Batal</a>
 </form>
